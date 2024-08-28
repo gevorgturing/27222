@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Test</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>English Proficiency Test</h1>
+        <div id="timer"></div>
+        <div id="testSection">
+            <div id="tasks"></div>
+            <div id="essaySection">
+                <h2>Write an essay on:</h2>
+                <p id="essayTopic"></p>
+                <textarea id="essayContent" placeholder="Write your essay here..."></textarea>
+                <p id="wordCount">Word Count: 0</p>
+            </div>
+        </div>
+        <div id="userInfo">
+            <input type="text" id="name" placeholder="Your Name" required>
+            <input type="email" id="email" placeholder="Your Email" required>
+            <button onclick="submitTest()">Submit Test</button>
+        </div>
+        <div id="result"></div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

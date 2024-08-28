@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Test</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <style>
+        body { padding: 20px; }
+        #timer { font-size: 24px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>English Proficiency Test</h1>
+        <form id="userDetails">
+            <input type="text" id="name" placeholder="Name" required>
+            <input type="email" id="email" placeholder="Email" required>
+        </form>
+        <div id="timer"></div>
+        <div id="tasks"></div>
+        <div>
+            <h2>Write an essay on:</h2>
+            <p id="essayTopic"></p>
+            <textarea id="essayText" rows="10" cols="30"></textarea>
+            <p id="wordCount"></p>
+        </div>
+        <button onclick="submitTest()">Submit Test</button>
+        <div id="results"></div>
+    </div>
+
+    <script>
+        const tasksJson = [
+            // 20 tasks here
+        ];
+        const topicsJson = [
+            // Essay topics here
+        ];
+
+        let countdown;
+        let timeLeft = 20 * 60; // 20 minutes in seconds
+        let selectedTasks = [];
+        let essayTopic;
+
+        function setup() {
+            noCanvas();
+            selectRandomTasks();
+            displayTasks();
+            startTimer();
+            selectEssayTopic();
+        }
+
+        function selectRandomTasks() {
+            for (let i = 0; i < 10; i++) {
+                let index;
+                do {
+                    index = Math.floor(Math.random() * tasksJson.length);
+                } while (selectedTasks.includes(index));
+                selectedTasks.push(index);
+            }
+        }
+
+        function displayTasks() {
+            const tasksDiv = document.getElementById('tasks');
+            tasksDiv.innerHTML = '';
+            selectedTasks.forEach((taskIndex, i) => {
+                const task = tasksJson[taskIndex];
+                const options = shuffleArray(task.options);
+                tasksDiv.innerHTML += `
+                    <p>${i+1}. ${task.question}</p>
+                    ${options.map((option, j) => `<input type="radio" name="task${i}" value="${j}">${option}</input><br>`).join('')}
+                `;
+            });
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function startTimer() {
+            countdown = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').innerText = `Time left: ${formatTime(timeLeft)}`;
+                if (timeLeft <= 0) {
+                    submitTest();
+                }
+            }, 1000);
+        }
+
+        function formatTime(seconds) {
+            const min = Math.floor(seconds / 60);
+            const sec = seconds % 60;
+            return `${min}:${sec < 10 ? '0' + sec : sec}`;
+        }
+
+        function selectEssayTopic() {
+            essayTopic = topicsJson[Math.floor(Math.random() * topicsJson.length)];
+            document.getElementById('essayTopic').innerText = essayTopic;
+        }
+
+        function submitTest() {
+            clearInterval(countdown);
+            const answers = selectedTasks.map((taskIndex, i) => {
+                const selectedOption = document.querySelector(`input[name="task${i}"]:checked`);
+                return selectedOption ? selectedOption.value === tasksJson[taskIndex].correct : false;
+            });
+            const correctCount = answers.filter(Boolean).length;
+            const essayText = document.getElementById('essayText').value;
+            const words = essayText.trim().split(/\s+/);
+            const wordCountDisplay = document.getElementById('wordCount');
+            wordCountDisplay.innerText = `Word count: ${words.length}`;
+            if (words.length < 300 || words.length > 400) {
+                wordCountDisplay.style.color = 'red';
+            } else {
+                wordCountDisplay.style.color = 'green';
+            }
+            document.getElementById('results').innerText = `Your score: ${correctCount} out of 10`;
+        }
+
+        setup();
+    </script>
+</body>
+</html>
